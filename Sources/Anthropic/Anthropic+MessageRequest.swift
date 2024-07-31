@@ -101,7 +101,7 @@ public extension Anthropic {
         let type: ResponseType
         let message: MessageResponseInfo?
         let stream: StreamResponseInfo?
-        var usage: Usage? { return message?.usage ?? stream?.usage }
+        var usage: Usage { return Usage(input_tokens: message?.usage.input_tokens, output_tokens: stream?.usage?.output_tokens ?? message?.usage.output_tokens ?? 0) }
 
         init() {
             type = .empty
@@ -227,7 +227,7 @@ extension Anthropic.MessageResponse: StreamableLangToolResponse {
 
     public func combining(with next: Anthropic.MessageResponse) -> Anthropic.MessageResponse {
         guard type != .empty else { return next }
-        guard case .array(var array) = message?.content else { return self }
+        guard let message = self.message, case .array(var array) = message.content else { return self }
         // combine message content based on index
         if let index = next.stream?.index, let delta = next.stream?.delta {
             if index < array.count {
@@ -240,7 +240,7 @@ extension Anthropic.MessageResponse: StreamableLangToolResponse {
                 if delta.type == "tool_use", let id = delta.id, let name = delta.name { array.append(.toolUse(.init(id: id, name: name, input: ""))) } // This is kind of a hack, the api returns an empty json object for the "input" key, but then returns a string for "partial_json", so we ignore the "input" key when streaming.
             }
         }
-        return Anthropic.MessageResponse(content: .array(array), id: message!.id, model: message!.model, role: message!.role, stop_reason: message?.stop_reason ?? next.stream?.delta?.stop_reason, stop_sequence: message?.stop_sequence ?? next.stream?.delta?.stop_sequence, type: message?.type ?? next.message?.type ?? type, usage: usage!)
+        return Anthropic.MessageResponse(content: .array(array), id: message.id, model: message.model, role: message.role, stop_reason: message.stop_reason ?? next.stream?.delta?.stop_reason, stop_sequence: message.stop_sequence ?? next.stream?.delta?.stop_sequence, type: next.message?.type ?? message.type, usage: usage)
     }
 }
 
