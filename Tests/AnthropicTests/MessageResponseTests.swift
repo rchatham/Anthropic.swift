@@ -21,8 +21,8 @@ final class MessageResponseTests: XCTestCase {
                     response.message?.stop_reason == .end_turn &&
                     response.message?.stop_sequence == nil &&
                     response.type == .message &&
-                    response.usage?.input_tokens == 10 &&
-                    response.usage?.output_tokens == 25)
+                    response.usage.input_tokens == 10 &&
+                    response.usage.output_tokens == 25)
                 guard case .array(let array) = response.message?.content,
                     case .text(let text) = array[0],
                     text.text == "Hi! My name is Claude."
