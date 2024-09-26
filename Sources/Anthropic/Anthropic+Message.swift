@@ -2,19 +2,19 @@ import Foundation
 
 public extension Anthropic {
     struct Message: Codable {
-        let role: Role
-        let content: Content
+        public let role: Role
+        public let content: Content
 
         enum CodingKeys: String, CodingKey {
             case role, content
         }
 
-        init(role: Role, content: String) {
+        public init(role: Role, content: String) {
             self.role = role
             self.content = .string(content)
         }
 
-        init(role: Role, content: Content) {
+        public init(role: Role, content: Content) {
             self.role = role
             self.content = content
         }
