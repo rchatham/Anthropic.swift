@@ -34,7 +34,7 @@ public extension Anthropic {
         let top_k: Int?
         let top_p: Double?
 
-        init(model: Model, messages: [Message], max_tokens: Int = 1024, metadata: Metadata? = nil, stop_sequences: [String]? = nil, stream: Bool? = nil, system: String? = nil, temperature: Double? = nil, tools: [Tool]? = nil, tool_choice: ToolChoice? = nil, top_k: Int? = nil, top_p: Double? = nil) {
+        public init(model: Model, messages: [Message], max_tokens: Int = 1024, metadata: Metadata? = nil, stop_sequences: [String]? = nil, stream: Bool? = nil, system: String? = nil, temperature: Double? = nil, tools: [Tool]? = nil, tool_choice: ToolChoice? = nil, top_k: Int? = nil, top_p: Double? = nil) {
             self.model = model
             self.messages = messages
             self.max_tokens = max_tokens
@@ -64,7 +64,7 @@ public extension Anthropic {
             return .init(model: model, messages: messages + [Message(role: .user, content: .array(toolResults))])
         }
 
-        enum ToolChoice: Codable {
+        public enum ToolChoice: Codable {
             case auto, `any`, tool(String)
 
             public func encode(to encoder: Encoder) throws {
@@ -92,16 +92,16 @@ public extension Anthropic {
             }
         }
 
-        struct Metadata: Codable {
+        public struct Metadata: Codable {
             let user_id: String?
         }
     }
 
     struct MessageResponse: Codable {
-        let type: ResponseType
-        let message: MessageResponseInfo?
-        let stream: StreamResponseInfo?
-        var usage: Usage { return Usage(input_tokens: message?.usage.input_tokens, output_tokens: stream?.usage?.output_tokens ?? message?.usage.output_tokens ?? 0) }
+        public let type: ResponseType
+        public let message: MessageResponseInfo?
+        public let stream: StreamResponseInfo?
+        public var usage: Usage { return Usage(input_tokens: message?.usage.input_tokens, output_tokens: stream?.usage?.output_tokens ?? message?.usage.output_tokens ?? 0) }
 
         init() {
             type = .empty
@@ -174,7 +174,7 @@ extension Anthropic.MessageResponse: StreamableLangToolResponse {
         }
     }
 
-    public struct StreamMessageResponse: Codable {
+    internal struct StreamMessageResponse: Codable {
         let type: ResponseType
         let message: MessageResponseInfo?
         let index: Int?
@@ -244,7 +244,7 @@ extension Anthropic.MessageResponse: StreamableLangToolResponse {
     }
 }
 
-enum MessageRequestError: Error {
+public enum MessageRequestError: Error {
     case failedToDecodeFunctionArguments
     case missingRequiredFunctionArguments
 }

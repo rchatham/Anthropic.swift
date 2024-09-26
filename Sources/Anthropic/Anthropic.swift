@@ -18,7 +18,7 @@ public final class Anthropic: LangTools {
     static let baseURL: URL = URL(string: "https://api.anthropic.com/v1/")!
     private let apiKey: String
 
-    init(apiKey: String) {
+    public init(apiKey: String) {
         self.apiKey = apiKey
     }
 
